@@ -1,0 +1,92 @@
+<style type="text/css" media="print">
+@media print {
+	@page {
+		margin-top: 1cm !important;
+	} 
+}
+</style>
+
+<% bool mbr = oAEAuthInfo.GetInfo("WhichPrv").IndexOf("member", StringComparison.OrdinalIgnoreCase) >= 0; %>
+<% bool isCarv = oAEAuthInfo.GetInfo("AUTST").IndexOf("carv", StringComparison.OrdinalIgnoreCase) >= 0; %>
+
+<table style="width: 100%;">
+	<tbody>
+		<tr>
+			<td style="padding-left: 20px !important; font-family: arial !important; font-size: 12pt !important; width:52% !important"><!--#INCLUDE FILE ="Address_Text_C1.aspx"--></td>
+			<td style="text-align: right; color:#FFF !important; vertical-align: top; font-family: arial !important; font-size: 12pt !important">~~~</td>
+		</tr>
+	</tbody>
+</table>
+
+<br/>
+<p><br/></p>
+<p><br/></p>
+<p>&nbsp;<br/></p>
+
+<table style="width: 100%; margin-left: 20px">
+    <tbody>
+		<tr>
+			<td style="width: 50%; font-family: arial !important; font-size: 12pt !important">
+				<%=oAEAuthInfo.GetInfo("LetterTo_name")%>
+			</td>
+		</tr>
+		
+		<tr>
+			<td style="font-family: arial !important; font-size: 12pt !important">
+				<%=oAEAuthInfo.GetInfo("LetterTo_Address1")%> <%=oAEAuthInfo.GetInfo("LetterTo_Address2")%><br />
+			</td>
+		</tr>
+		
+		<tr>
+			<td style="font-family: arial !important; font-size: 12pt !important">
+				<%=oAEAuthInfo.GetInfo("LetterTo_City")%>, <%=oAEAuthInfo.GetInfo("LetterTo_State")%> <%=oAEAuthInfo.GetInfo("LetterTo_Zip")%>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<br />
+
+<%
+if(mbr && (oAEAuthInfo.GetInfo("Auth_Status") == "Approved") && ((oAEAuthInfo.GetInfo("Campus") == "Los Angeles") || (oAEAuthInfo.GetInfo("Campus") == "Burbank") || (oAEAuthInfo.GetInfo("Campus") == "Glendale")) && ((oAEAuthInfo.GetInfo("Letter_Type") == "Auto") || (oAEAuthInfo.GetInfo("Letter_Type") == "PrintPreview"))){
+	Response.Write("<div style='font-size:17px !important; text-align:center; padding-top:250px'>If you encounter difficulty scheduling a timely appointment with the provider on the enclosed referral, please call our Member Service Department at (818) 464-3680 Monday through Friday 8:00am to 5:00pm.</div>");
+}
+%>
+
+<br />
+
+<span class="RawCodeBlock" style="">
+<!--START_RAWCODEBLOCK-->
+<!-- Below has been updated to use the field WhichPrvt to determine if it is the Member/Provider -->
+<%if(!mbr){%>
+<!--#INCLUDE FILE ="Logo_C.aspx"-->
+<%
+Response.Write("<br/><p style='text-align: center; margin: 0px'><span style='font-family: arial,helvetica,sans-serif !important; font-size: 28pt !important; font-weight: bold !important'>Confidential Notification</span><br /> <span style='font-family: arial,helvetica,sans-serif !important; font-size: 18pt !important; font-weight: bold !important'>containing</span><br /> <span style='font-family: arial,helvetica,sans-serif !important; font-size: 28pt !important; font-weight: bold !important'>Protected Health Information</span><br /> </p><br /> <SPAN style='font-family: arial,helvetica,sans-serif !important; font-size: 14pt !important; font-weight: bold !important'> <TABLE BORDER=0 WIDTH='100%'><TBODY><TR><TD WIDTH='10%'></TD><TD WIDTH='45%'></TD><TD WIDTH='15%'></TD><TD WIDTH='10%'></TD><TD WIDTH='20%'></TD></TR><TR><TD style='vertical-align:top'>To:</TD><TD COLSPAN='2' style='vertical-align:top'>" +oAEAuthInfo.GetInfo("Letterto_Name") + "</TD><TD ALIGN='RIGHT'>Fax:</TD><TD>" +oAEAuthInfo.GetInfo("LetterTo_Fax") + "</TD></TR><TR><TD> </TD><TD COLSPAN='4'>" + "</TD></TR><TR><TD style='vertical-align:top'>From:</TD><TD>" + oAEAuthInfo.GetInfo("ShortName") + "<br />"); 
+if(isCarv){
+Response.Write("");
+} else {
+Response.Write("" + oAEAuthInfo.GetInfo("Campus_MD") + "</TD>");
+}
+%>
+<%
+if ((oAEAuthInfo.GetInfo("HealthPlan_Name").Contains("CalOptima")) || (oAEAuthInfo.GetInfo("HealthPlan_Name").Contains("OneCare")))
+	Response.Write("<TD COLSPAN='2' ALIGN='RIGHT'>Main Office<br />Contact Number:</TD><TD>");
+else if(isCarv)
+	Response.Write("");
+else
+	Response.Write("<TD COLSPAN='2' ALIGN='RIGHT'>Contact Number:</TD><TD>");
+%>
+<%
+if ((oAEAuthInfo.GetInfo("Auth_Status").Contains("Denied") || oAEAuthInfo.GetInfo("Parameter_Delay").Contains("1")) && !isCarv){
+	Response.Write(oAEAuthInfo.GetInfo("Campus_MD_Phone"));
+} else if(isCarv){
+	Response.Write("");
+} else{
+%> 
+	<!--#INCLUDE FILE = "Phone_C.aspx"--> 
+<%
+}
+Response.Write("</TD></TR><TR><TD>Date:</TD><TD colspan=&quot;4&quot;> " +oAEAuthInfo.GetInfo("CurrentDate_Long") + "</TD></TR></TBODY></TABLE></SPAN><hr color='#000000' size=&quot;2&quot; /><p style='font: 11pt arial !important'>WARNING: The documents accompanying this transmission may contain confidential health information that is legally protected and/or which contain protected health information (PHI). This information is intended only for the use of the individual or entity named above. The authorized recipient of this information is prohibited from disclosing this information to any other party unless permitted to do so by law or regulation. The protected health information as attached hereto is covered by the California Medical Information Act (&quot;CMIA&quot;) as well as by the Health Insurance Portability and Accountability Act of 1996 (&quot;HIPAA&quot;). This message is intended only for the use of the individual or entity to which it is addressed, and may contain information, which is privileged, confidential and exempt from disclosure under applicable law. If you are not the intended recipient, you are hereby notified that any use, disclosure, copying, or distribution, is strictly prohibited. If you have received this information in error, please notify the sender immediately, at the contact number stated above, and arrange for the return or destruction of these documents.</p>" );
+}
+%><!--END_RAWCODEBLOCK--></span>
+
+<div style="page-break-after: always">&nbsp;</div>
